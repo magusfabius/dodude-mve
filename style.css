@@ -29,6 +29,7 @@
     object-fit: contain;
 }
 
+#toggleCameraButton,
 #freezeButton,
 #sendButton,
 #newImageButton,
@@ -48,6 +49,7 @@
     margin:10px
 }
 
+#toggleCameraButton
 #freezeButton:hover,
 #sendButton:hover,
 #newImageButton:hover,

@@ -1,5 +1,10 @@
 # DoDude MVE
 
+Added bootstrap for styling
+    - navbar
+
+Added front/back camera toggle 
+
 
 thanks to 
 https://github.com/do-me/js-camera-capture/tree/main

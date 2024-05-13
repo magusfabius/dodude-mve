@@ -1,29 +1,67 @@
 const cameraButton = document.getElementById('cameraButton');
 const freezeButton = document.getElementById('freezeButton');
 const sendButton = document.getElementById('sendButton');
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const capturedImage = document.getElementById('capturedImage');
 const abortButton = document.getElementById('abortButton');
 const newImageButton = document.getElementById('newImageButton');
 const downloadButton = document.getElementById('downloadButton');
+const toggleCameraButton = document.getElementById('toggleCameraButton')
+
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const capturedImage = document.getElementById('capturedImage');
+
+
 const overlay = document.getElementById('overlay')
 const overlayContent = document.getElementById('overlay-content')
 
-let stream;
+let stream = null;
 let frozenFrame = null;
 
+
+// MOBILE DETECTION
+function detectMob() {
+    return ( ( window.innerWidth <= 800 ) && ( window.innerHeight <= 600 ) );
+}
+
+let is_mobile = detectMob()
+console.log("is_mobile: " + is_mobile)
+
+let currentFacingMode = 'environment'; // Default to rear camera
+
+// Function to toggle the camera between front and back
+function toggleCamera() {
+    currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+    startCamera(currentFacingTool);
+}
+
+
 // Access the camera and stream the video
-async function startCamera() {
+async function startCamera(facingMode = 'environment') {
+   
+    const constraints = {
+        video: {
+            facingMode
+        }
+    };
+
+
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        if(stream != null){
+            stopVideoAndClearCanvas()
+        }
+
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         video.style.display = 'block';
+        toggleCameraButton.style.display = 'block';
         freezeButton.style.display = 'block';
         abortButton.style.display = 'block';
         cameraButton.style.display = 'none';
     } catch (error) {
         console.error('Error accessing camera:', error);
+        // Provide user feedback about the error
+        alert('Could not access the camera. Please check device settings and permissions.');
     }
 }
 
@@ -47,6 +85,7 @@ function freezeFrame() {
     // Hide the video and show the send button
     video.style.display = 'none';
     freezeButton.style.display = 'none';
+    toggleCameraButton.style.display = 'none';
     sendButton.style.display = 'block';
     abortButton.style.display = 'block'
     newImageButton.style.display = 'block';
@@ -149,3 +188,4 @@ cameraButton.addEventListener('click', handleNewImageClick);
 freezeButton.addEventListener('click', freezeFrame);
 downloadButton.addEventListener('click', downloadImage);
 sendButton.addEventListener('click', sendFrozenFrame);
+toggleCameraButton.addEventListener('click', toggleCamera);
