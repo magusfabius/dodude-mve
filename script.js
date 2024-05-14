@@ -32,7 +32,7 @@ let currentFacingMode = 'environment'; // Default to rear camera
 // Function to toggle the camera between front and back
 function toggleCamera() {
     currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
-    startCamera(currentFacingTool);
+    startCamera(currentFacingMode);
 }
 
 
