@@ -5,6 +5,9 @@ Added bootstrap for styling
 
 Added front/back camera toggle 
 
+Taken photo showed insted of the placeholder gif
+
+
 
 thanks to 
 https://github.com/do-me/js-camera-capture/tree/main

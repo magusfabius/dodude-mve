@@ -11,6 +11,9 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const capturedImage = document.getElementById('capturedImage');
 
+// POLAROID 
+const imagePlaceHolder = document.getElementById('image-placeholder')
+const finalImage = document.getElementById('finalImage')
 
 const overlay = document.getElementById('overlay')
 const overlayContent = document.getElementById('overlay-content')
@@ -25,16 +28,14 @@ function detectMob() {
 }
 
 let is_mobile = detectMob()
-console.log("is_mobile: " + is_mobile)
-
 let currentFacingMode = 'environment'; // Default to rear camera
+
 
 // Function to toggle the camera between front and back
 function toggleCamera() {
     currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
     startCamera(currentFacingMode);
 }
-
 
 // Access the camera and stream the video
 async function startCamera(facingMode = 'environment') {
@@ -47,9 +48,11 @@ async function startCamera(facingMode = 'environment') {
 
 
     try {
+        /*
         if(stream != null){
             stopVideoAndClearCanvas()
         }
+        */
 
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
@@ -75,9 +78,17 @@ function freezeFrame() {
     // Convert canvas to data URL
     const dataURL = canvas.toDataURL('image/jpeg', 0.9);
 
+    
     // Display the frozen image
     capturedImage.src = dataURL;
     capturedImage.style.display = 'block';
+
+    // Prepare the final image in the canvas
+    finalImage.src = dataURL;
+    finalImage.style.display = 'none'
+    finalImage.style.height = "100%"
+    finalImage.style.width = "100%"
+
 
     // Store the frozen frame
     frozenFrame = dataURL;
@@ -130,7 +141,23 @@ function stopVideoAndClearCanvas() {
 
 // Send the frozen image to a ntfy server
 function sendFrozenFrame() {
-    if (frozenFrame) {
+
+    // ------------- Display the frozen frame in the canvas
+    imagePlaceHolder.style.display = 'none'
+    finalImage.style.display = 'block'
+    
+    stopVideoAndClearCanvas();
+
+    video.style.display = 'none';
+    freezeButton.style.display = 'none';
+    toggleCameraButton.style.display = 'none';
+    sendButton.style.display = 'none';
+    abortButton.style.display = 'none'
+    newImageButton.style.display = 'none';
+    downloadButton.style.display = 'none';
+
+
+    /*if (frozenFrame) {
         const blob = dataURItoBlob(frozenFrame);
 
         const url = 'https://ntfy.sh/js-camera-capture';
@@ -146,7 +173,6 @@ function sendFrozenFrame() {
                     console.log('Image sent successfully');
                     cameraButton.style.display = 'block';
                     stopVideoAndClearCanvas();
-
                 } else {
                     console.error('Error sending image:', response.statusText);
                 }
@@ -154,7 +180,7 @@ function sendFrozenFrame() {
             .catch(error => {
                 console.error('Fetch error:', error);
             });
-    }
+    }*/
 }
 
 function dataURItoBlob(dataURI) {
@@ -175,7 +201,7 @@ function handleNewImageClick() {
     newImageButton.style.display = 'none';
     downloadButton.style.display = 'none';
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        startCamera();
+        startCamera(currentFacingMode);
     } else {
         console.error('getUserMedia is not supported on this browser.');
     }
